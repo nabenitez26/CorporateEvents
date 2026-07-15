@@ -7,10 +7,9 @@ namespace CorporateEvents.SampleApi.Handlers
     {
         public async Task HandleAsync(PolicyIssuedEvent EventPolicy)
         {
-            /*Console.WriteLine($"Enviando correo a {EventPolicy.Email}");
+            Console.WriteLine($"Enviando correo a {EventPolicy.Email}");
 
-            await Task.Delay(500);*/
-            throw new Exception("Error de prueba");
+            await Task.Delay(500);
         }
     }
 }

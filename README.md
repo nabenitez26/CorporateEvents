@@ -25,6 +25,28 @@ Este framework permite desacoplar los procesos de negocio mediante eventos, faci
 
 ## Arquitectura
 
+                Sample API
+                     │
+                     ▼
+              EventBus.Publish()
+                     │
+                     ▼
+         SubscriptionManager
+                     │
+        ┌────────────┼────────────┐
+        ▼            ▼            ▼
+ SendEmail     AuditHandler   SendSms
+        │            │            │
+        └────────────┼────────────┘
+                     ▼
+               Retry Manager
+                     │
+          ¿Falló después del Retry?
+               │             │
+             No             Sí
+               │             │
+               ▼             ▼
+        CompleteProcessing   DeadLetterQueue
 
 **Flujo de eventos:**
 1. El controlador invoca `EventBus.Publish()`.
@@ -37,6 +59,13 @@ Este framework permite desacoplar los procesos de negocio mediante eventos, faci
 ---
 
 ## Estructura de proyectos
+
+CorporateEvents
+│
+├── CorporateEvents.Abstractions
+├── CorporateEvents.Core
+├── CorporateEvents.Persistence.SqlServer
+└── CorporateEvents.SampleApi
 
 - **CorporateEvents.Abstractions**  
   Interfaces, contratos, eventos base, DTOs y configuraciones compartidas.
@@ -62,6 +91,7 @@ Este framework permite desacoplar los procesos de negocio mediante eventos, faci
 
 ## Ejemplo de uso
 
+```csharp
 await _eventBus.Publish(new PolicyIssuedEvent
 {
     PolicyNumber = "POL-10001",
@@ -69,6 +99,7 @@ await _eventBus.Publish(new PolicyIssuedEvent
     Email = "cliente@correo.com",
     Phone = "123456789"
 });
+```
 
 ---
 
@@ -105,8 +136,23 @@ await _eventBus.Publish(new PolicyIssuedEvent
 
 ---
 
+## Cómo probar
+
+1. Ejecutar el script SQL.
+2. Configurar la cadena de conexión.
+3. Ejecutar CorporateEvents.SampleApi.
+4. Abrir Swagger.
+5. Ejecutar POST /api/Policy.
+6. Revisar:
+   - EventProcessing
+   - DeadLetterEvents
+   - Logs
+
+---
+
 ## Contacto
 
 Autor: [Nilson Andres Benitez Rodriguez]  
 Email: nabenitez26@hotmail.com 
+Celular: +57 311 244 9679
 LinkedIn: https://www.linkedin.com/in/nabenitezr
